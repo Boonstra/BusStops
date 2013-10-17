@@ -41,29 +41,25 @@ return array(
 			'urlFormat'=>'path',
 			'rules'=>array(
 				// REST patterns (must come before the other controller rules, as these are very specific)
-				array('api/busstop', 'pattern'=>'api/login/', 'verb'=>'GET'),
-				array('api/getEncryptedPassword', 'pattern'=>'api/getEncryptedPassword', 'verb'=>'GET'),
 				array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
-				array('api/create', 'pattern'=>'api/<model:\w+>/add', 'verb'=>'GET'),
 
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
+		/*
 		'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
 		),
-		// uncomment the following to use a MySQL database
-		/*
+		*/
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=testdrive',
+			'connectionString' => 'mysql:host=localhost;dbname=getconnected',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => '',
 			'charset' => 'utf8',
 		),
-		*/
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',

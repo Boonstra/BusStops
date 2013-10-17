@@ -1,24 +1,52 @@
 <?php
 
 /**
- * This is the model class for table "busStop".
+ * This is the model class for table "busstops".
  *
- * The followings are the available columns in table 'busStop':
+ * The followings are the available columns in table 'busstops':
  * @property integer $id
- * @property integer $user_id
- * @property string $value
- * @property string $datetime
+ * @property integer $halteNummer_overig
+ * @property double  $GPS_Longtitude
+ * @property double  $GPS_Latitude
+ * @property string  $naam
+ * @property double  $opt_dieptehaltekom
+ * @property double  $opt_halteerlengte1
+ * @property double  $opt_halteerlengte2
+ * @property double  $opt_halteerlengte3
+ * @property string  $opt_inrijhoek
+ * @property string  $opt_uitrijhoek
+ * @property string  $opt_perronband
+ * @property double  $opt_perronhoogte
+ * @property double  $opt_perronbreedte
+ * @property double  $opt_perronlengte
+ * @property double  $opt_barrierevrije_doorgang
+ * @property string  $opt_hellingshoek
+ * @property double  $opt_breedteaanlooproute
+ * @property double  $opt_hoogteverschilperron
+ * @property integer $opt_markeringperronrand
+ * @property integer $opt_geleidelijn
+ * @property integer $opt_aanwezigheidabri
+ * @property double  $opt_afstandperronabri
+ * @property string  $opt_halteaanduiding
+ * @property string  $opt_reisinformatie
+ * @property integer $opt_infoomgeving
+ * @property integer $opt_zitgelegenheid
+ * @property string  $opt_verlichting
+ * @property integer $opt_afvalbak
+ * @property integer $opt_fietsparkeervoorziening
+ * @property string  $category
+ * @property string  $city
  *
  * The followings are the available model relations:
  */
-class ECGMeasurement extends CActiveRecord
+class BusStop extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'busStop';
+		return 'busstops';
 	}
 
 	/**
@@ -27,15 +55,34 @@ class ECGMeasurement extends CActiveRecord
 	public function rules()
 	{
 		return array(
-			// The following fields are required
-			array('user_id, value, datetime', 'required'),
-			// Numerical values
-			array('user_id', 'numerical', 'integerOnly' => true,),
-			// Datetime should be the following format
-			array('datetime', 'date', 'format'=>'yyyy-MM-dd HH:mm:ss'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id', 'safe', 'on'=>'search'),
+			// Required
+			array('id, halteNummer_overig, GPS_Longtitude, GPS_Latitude', 'required'),
+			// Integer
+			array('
+				id,
+				halteNummer_overig,
+				GPS_Longtitude,
+				GPS_Latitude,
+				opt_dieptehaltekom,
+				opt_halteerlengte1,
+				opt_halteerlengte2,
+				opt_halteerlengte3,
+				opt_perronhoogte,
+				opt_perronbreedte,
+				opt_perronlengte,
+				opt_barrierevrije_doorgang,
+				opt_breedteaanlooproute,
+				opt_hoogteverschilperron,
+				opt_markeringperronrand,
+				opt_geleidelijn,
+				opt_aanwezigheidabri,
+				opt_afstandperronabri,
+				opt_infoomgeving,
+				opt_zitgelegenheid,
+				opt_afvalbak,
+				opt_fietsparkeervoorziening
+			',
+			'numerical'),
 		);
 	}
 
@@ -44,42 +91,14 @@ class ECGMeasurement extends CActiveRecord
 	 */
 	public function relations()
 	{
-		return array(
-			'user' => array(self::BELONGS_TO, 'User', 'user_id'),
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id);
-		$criteria->compare('user_id',$this->user_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
+		return array();
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ECGMeasurement the static model class
+	 * @return BusStop the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
