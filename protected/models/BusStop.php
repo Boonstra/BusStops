@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'busstops':
  * @property integer $id
  * @property integer $halteNummer_overig
- * @property double  $GPS_Longtitude
+ * @property double  $GPS_Longitude
  * @property double  $GPS_Latitude
  * @property string  $naam
  * @property double  $opt_dieptehaltekom
@@ -56,12 +56,12 @@ class BusStop extends CActiveRecord
 	{
 		return array(
 			// Required
-			array('id, halteNummer_overig, GPS_Longtitude, GPS_Latitude', 'required'),
+			array('id, halteNummer_overig, GPS_Longitude, GPS_Latitude', 'required'),
 			// Integer
 			array('
 				id,
 				halteNummer_overig,
-				GPS_Longtitude,
+				GPS_Longitude,
 				GPS_Latitude,
 				opt_dieptehaltekom,
 				opt_halteerlengte1,
