@@ -19,96 +19,49 @@ class ApiController extends Controller
 	 */
 	public function actionList()
 	{
+		$gpsLatitude = $gpsLongitude = "";
+
+		if (isset($_REQUEST['gps_longitude']) &&
+			is_numeric($_REQUEST['gps_longitude']))
+		{
+			$gpsLongitude = $_REQUEST['gps_longitude'];
+		}
+		else
+		{
+			$this->_sendResponse(500, CJSON::encode(array("message" => "failed", "error" => "Incorrect coordinates were passed.")));
+
+			Yii::app()->end();
+		}
+
+		if (isset($_REQUEST['gps_latitude']) &&
+			is_numeric($_REQUEST['gps_latitude']))
+		{
+			$gpsLatitude = $_REQUEST['gps_latitude'];
+		}
+		else
+		{
+			$this->_sendResponse(500, CJSON::encode(array("message" => "failed", "error" => "Incorrect coordinates were passed.")));
+
+			Yii::app()->end();
+		}
+
+		if (isset($_REQUEST['range']) &&
+			is_numeric($_REQUEST['range']) &&
+			$_REQUEST['range'] > 0)
+		{
+			$range = $_REQUEST['range'];
+		}
+		else
+		{
+			$range = 1000;
+		}
+
 		$criteria = new CDbCriteria();
 
-//		$gpsLongitude = 53.13; // Central Groningen according to Wikipedia
-//		$gpsLatitude  = 6.34;
-//
-//		$range = 6000; //25; // TODO The smallest distance was at least 5975. The database is currently incorrect, though. (17-10-2013 Stefan home PC)
-//
-//		// TODO Figure out whether this returns in miles or KM, probably miles.
-//		echo "SELECT *, (/*3959*/ 6372.797 * acos(cos(radians($gpsLatitude)) * cos(radians(`GPS_Latitude`)) * cos(radians(`GPS_Longitude`) - radians($gpsLongitude)) + sin(radians($gpsLatitude)) * sin(radians(`GPS_Latitude`)))) AS `distance` FROM `busstops` /*HAVING `distance` < $range*/ ORDER BY `distance` ASC /*LIMIT 0, 20*/";
-//
-//		// This returns the distance between Groningen's central location (53.13 (lat), 6.34 (long)) according to Wikipedia and the bus stop with ID: 119552. (52.5234090000 (lat), 7.2577900000 (long))
-//		function distance($lat1, $lng1, $lat2, $lng2, $miles = true)
-//		{
-//			$pi80 = M_PI / 180;
-//			$lat1 *= $pi80;
-//			$lng1 *= $pi80;
-//			$lat2 *= $pi80;
-//			$lng2 *= $pi80;
-//
-//			$r = 6372.797; // mean radius of Earth in km
-//			$dlat = $lat2 - $lat1;
-//			$dlng = $lng2 - $lng1;
-//			$a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlng / 2) * sin($dlng / 2);
-//			$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-//			$km = $r * $c;
-//
-//			return ($miles ? ($km * 0.621371192) : $km);
-//		}
-//		echo "
-//			SELECT `id`, `GPS_Longitude`, `GPS_Latitude`, `naam`,
-//					( /*3959 **/ acos( cos( radians( $gpsLatitude ) )
-//	       				   * cos( radians( `GPS_Latitude` ) )
-//	       				   * cos( radians( `GPS_Longitude` ) - radians( $gpsLongitude ) )
-//	       				   + sin( radians( $gpsLatitude ) )
-//	       				   * sin( radians( `GPS_Latitude` ) ) ) ) AS `distance`
-//			FROM `busstops`
-//			/*WHERE active = 1
-//				AND locations.lat between X1 and X2
-//				AND locations.Long between y1 and y2*/
-//			/*HAVING distance < 10*/ ORDER BY distance;";
-//
-//		var_dump(distance(53.13, 6.34, 52.5234090000, 7.2577900000, false));
-//		var_dump(distance(53.2116, 6.5658, 52.5234090000, 7.2577900000, false));
-//
-//		return;
-
+		$criteria->select = '*, calculateDistanceBetweenLocations(' . $gpsLatitude . ', ' . $gpsLongitude . ', `GPS_Latitude`, `GPS_Longitude`) AS `distance`';
+		$criteria->having = '`distance` < ' . $range;
 		$criteria->offset = 0;
-		$criteria->limit  = 20;
-
-//		if (isset($_REQUEST['offset']) &&
-//			is_numeric($_REQUEST['offset']) &&
-//			$_REQUEST['offset'] >= 0)
-//		{
-//			$criteria->offset = $_REQUEST['offset'];
-//		}
-//
-//		if (isset($_REQUEST['limit']) &&
-//			is_numeric($_REQUEST['limit']) &&
-//			$_REQUEST['limit'] >= 0)
-//		{
-//			$criteria->limit = $_REQUEST['limit'];
-//		}
-//
-//		$dateFrom = $dateTo = "";
-//
-//		if (isset($_REQUEST['dateFrom']) &&
-//			strlen($_REQUEST['dateFrom']) > 0)
-//		{
-//			$dateFrom = $_REQUEST['dateFrom'];
-//		}
-//
-//		if (isset($_REQUEST['dateTo']) &&
-//			strlen($_REQUEST['dateTo']) > 0)
-//		{
-//			$dateTo = $_REQUEST['dateTo'];
-//		}
-//
-//		if (!empty($dateFrom) &&
-//			!empty($dateTo))
-//		{
-//			$criteria->addBetweenCondition('datetime', $dateFrom, $dateTo);
-//		}
-//		else if (!empty($dateFrom))
-//		{
-//			$criteria->addBetweenCondition('datetime', $dateFrom, date('Y-m-d h:i:s'));
-//		}
-//		else if (!empty($dateTo))
-//		{
-//			$criteria->addBetweenCondition('datetime', '1900-01-01 00:00:00', $dateTo);
-//		}
+		$criteria->limit  = 50;
 
 		switch(strtolower($_GET['model']))
 		{

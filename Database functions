@@ -1,0 +1,28 @@
+DROP FUNCTION IF EXISTS calculateDistanceBetweenLocations;
+
+DELIMITER //
+
+CREATE FUNCTION calculateDistanceBetweenLocations(latitude1 DECIMAL(12, 9), longitude1 DECIMAL(12, 9), latitude2 DECIMAL(12, 9), longitude2 DECIMAL(12, 9))
+RETURNS DECIMAL(12, 2) DETERMINISTIC
+BEGIN
+
+	SET @pi80 := PI() / 180;
+
+	SET @latitude1  := latitude1  * @pi80;
+	SET @longitude1 := longitude1 * @pi80;
+	SET @latitude2  := latitude2  * @pi80;
+	SET @longitude2 := longitude2 * @pi80;
+
+	SET @latitudeDifference  := @latitude2 - @latitude1;
+	SET @longitudeDifference := @longitude2 - @longitude1;
+
+	SET @a := sin(@latitudeDifference / 2) * sin(@latitudeDifference / 2) + cos(@latitude1) * cos(@latitude2) * sin(@longitudeDifference / 2) * sin(@longitudeDifference / 2);
+
+	RETURN (2 * atan2(sqrt(@a), sqrt(1 - @a))) * 6372797;
+
+END //
+
+DELIMITER ;
+
+# A small function test, which should return 298.61 (meters)
+#SELECT calculateDistanceBetweenLocations(53.2116, 6.5658, 53.2132, 6.5622);
