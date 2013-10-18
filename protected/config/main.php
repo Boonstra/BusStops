@@ -41,8 +41,10 @@ return array(
 			'urlFormat'=>'path',
 			'rules'=>array(
 				// REST patterns (must come before the other controller rules, as these are very specific)
+				array('api/view', 'pattern'=>'api/<model:\w+>/<id:\w+>', 'verb'=>'GET'),
 				array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
 
+				// Controllers
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

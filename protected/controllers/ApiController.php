@@ -47,6 +47,18 @@ class ApiController extends Controller
 //
 //			return ($miles ? ($km * 0.621371192) : $km);
 //		}
+//		echo "
+//			SELECT `id`, `GPS_Longitude`, `GPS_Latitude`, `naam`,
+//					( /*3959 **/ acos( cos( radians( $gpsLatitude ) )
+//	       				   * cos( radians( `GPS_Latitude` ) )
+//	       				   * cos( radians( `GPS_Longitude` ) - radians( $gpsLongitude ) )
+//	       				   + sin( radians( $gpsLatitude ) )
+//	       				   * sin( radians( `GPS_Latitude` ) ) ) ) AS `distance`
+//			FROM `busstops`
+//			/*WHERE active = 1
+//				AND locations.lat between X1 and X2
+//				AND locations.Long between y1 and y2*/
+//			/*HAVING distance < 10*/ ORDER BY distance;";
 //
 //		var_dump(distance(53.13, 6.34, 52.5234090000, 7.2577900000, false));
 //		var_dump(distance(53.2116, 6.5658, 52.5234090000, 7.2577900000, false));
@@ -119,7 +131,7 @@ class ApiController extends Controller
 			}
 		}
 
-		$this->_sendResponse(200, CJSON::encode(array("message" => "success", "measurements" => $rows)));
+		$this->_sendResponse(200, CJSON::encode(array("message" => "success", "busstops" => $rows)));
 	}
 
 	/* Shows a single item
@@ -129,7 +141,40 @@ class ApiController extends Controller
 	 */
 	public function actionView()
 	{
-		$this->_sendResponse(501, CJSON::encode(array("message" => "failed", "error" => "Not implemented yet")));
+		$ID = -1;
+
+		if (isset($_REQUEST['id']) &&
+			is_numeric($_REQUEST['id']) &&
+			$_REQUEST['id'] >= 0)
+		{
+			$ID = $_REQUEST['id'];
+		}
+		else
+		{
+			$this->_sendResponse(500, CJSON::encode(array("message" => "failed", "error" => "Please pass correct bus stop ID")));
+
+			Yii::app()->end();
+		}
+
+		switch(strtolower($_GET['model']))
+		{
+			case 'busstop':
+				$model = BusStop::model()->findByPk($ID);
+				break;
+
+			default:
+				$this->_sendResponse(501, CJSON::encode(array("message" => "failed", "error" => "The list action is not implemented for this model")));
+				Yii::app()->end();
+		}
+
+		if ($model == null)
+		{
+			$this->_sendResponse(500, CJSON::encode(array("message" => "failed", "error" => "No bus stop with the passed ID was found.")));
+
+			Yii::app()->end();
+		}
+
+		$this->_sendResponse(200, CJSON::encode(array("message" => "success", "busstop" => $model->attributes)));
 	}
 
 	/**

@@ -39,7 +39,7 @@
  *
  * The followings are the available model relations:
  */
-class BusStop extends CActiveRecord
+class BusStop extends ActiveRecord
 {
 	/**
 	 * @return string the associated database table name
@@ -80,9 +80,10 @@ class BusStop extends CActiveRecord
 				opt_infoomgeving,
 				opt_zitgelegenheid,
 				opt_afvalbak,
-				opt_fietsparkeervoorziening
-			',
+				opt_fietsparkeervoorziening',
 			'numerical'),
+			// The following rule is used by search().
+			array('id', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -103,5 +104,10 @@ class BusStop extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function useTypeCasting()
+	{
+		return true;
 	}
 }
