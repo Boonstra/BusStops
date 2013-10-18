@@ -21,37 +21,40 @@ class ApiController extends Controller
 	{
 		$criteria = new CDbCriteria();
 
-		$gpsLongitude = 53.13; // Central Groningen according to Wikipedia
-		$gpsLatitude  = 6.34;
+//		$gpsLongitude = 53.13; // Central Groningen according to Wikipedia
+//		$gpsLatitude  = 6.34;
+//
+//		$range = 6000; //25; // TODO The smallest distance was at least 5975. The database is currently incorrect, though. (17-10-2013 Stefan home PC)
+//
+//		// TODO Figure out whether this returns in miles or KM, probably miles.
+//		echo "SELECT *, (/*3959*/ 6372.797 * acos(cos(radians($gpsLatitude)) * cos(radians(`GPS_Latitude`)) * cos(radians(`GPS_Longitude`) - radians($gpsLongitude)) + sin(radians($gpsLatitude)) * sin(radians(`GPS_Latitude`)))) AS `distance` FROM `busstops` /*HAVING `distance` < $range*/ ORDER BY `distance` ASC /*LIMIT 0, 20*/";
+//
+//		// This returns the distance between Groningen's central location (53.13 (lat), 6.34 (long)) according to Wikipedia and the bus stop with ID: 119552. (52.5234090000 (lat), 7.2577900000 (long))
+//		function distance($lat1, $lng1, $lat2, $lng2, $miles = true)
+//		{
+//			$pi80 = M_PI / 180;
+//			$lat1 *= $pi80;
+//			$lng1 *= $pi80;
+//			$lat2 *= $pi80;
+//			$lng2 *= $pi80;
+//
+//			$r = 6372.797; // mean radius of Earth in km
+//			$dlat = $lat2 - $lat1;
+//			$dlng = $lng2 - $lng1;
+//			$a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlng / 2) * sin($dlng / 2);
+//			$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+//			$km = $r * $c;
+//
+//			return ($miles ? ($km * 0.621371192) : $km);
+//		}
+//
+//		var_dump(distance(53.13, 6.34, 52.5234090000, 7.2577900000, false));
+//		var_dump(distance(53.2116, 6.5658, 52.5234090000, 7.2577900000, false));
+//
+//		return;
 
-		$range = 6000; //25; // TODO The smallest distance was at least 5975. The database is currently incorrect, though. (17-10-2013 Stefan home PC)
-
-		// TODO Figure out whether this returns in miles or KM, probably miles.
-		echo "SELECT *, (/*3959*/ 6372.797 * acos(cos(radians($gpsLatitude)) * cos(radians(`GPS_Latitude`)) * cos(radians(`GPS_Longitude`) - radians($gpsLongitude)) + sin(radians($gpsLatitude)) * sin(radians(`GPS_Latitude`)))) AS `distance` FROM `busstops` /*HAVING `distance` < $range*/ ORDER BY `distance` ASC /*LIMIT 0, 20*/";
-
-		// This returns the distance between Groningen's central location (53.13 (lat), 6.34 (long)) according to Wikipedia and the bus stop with ID: 119552. (52.5234090000 (lat), 7.2577900000 (long))
-		function distance($lat1, $lng1, $lat2, $lng2, $miles = true)
-		{
-			$pi80 = M_PI / 180;
-			$lat1 *= $pi80;
-			$lng1 *= $pi80;
-			$lat2 *= $pi80;
-			$lng2 *= $pi80;
-
-			$r = 6372.797; // mean radius of Earth in km
-			$dlat = $lat2 - $lat1;
-			$dlng = $lng2 - $lng1;
-			$a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlng / 2) * sin($dlng / 2);
-			$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-			$km = $r * $c;
-
-			return ($miles ? ($km * 0.621371192) : $km);
-		}
-
-		var_dump(distance(53.13, 6.34, 52.5234090000, 7.2577900000, false));
-		var_dump(distance(53.2116, 6.5658, 52.5234090000, 7.2577900000, false));
-
-		return;
+		$criteria->offset = 0;
+		$criteria->limit  = 20;
 
 //		if (isset($_REQUEST['offset']) &&
 //			is_numeric($_REQUEST['offset']) &&
@@ -95,9 +98,9 @@ class ApiController extends Controller
 //			$criteria->addBetweenCondition('datetime', '1900-01-01 00:00:00', $dateTo);
 //		}
 
-		switch($_GET['model'])
+		switch(strtolower($_GET['model']))
 		{
-			case 'busStop':
+			case 'busstop':
 				$models = BusStop::model()->findAll($criteria);
 				break;
 
